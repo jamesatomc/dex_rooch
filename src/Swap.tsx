@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Transaction } from '@roochnetwork/rooch-sdk';
 import {
   UseSignAndExecuteTransaction,
   useCurrentSession,
 } from '@roochnetwork/rooch-sdk-kit';
+import { useState, useEffect } from 'react';
 
 const counterAddress = '0xe454cffdfccf8e4d03030083339fa29356040cee45fd3a51f5046abeaba0681a';
 
@@ -43,36 +43,16 @@ function Swap() {
   const handleSwap = async () => {
     try {
       setTxnLoading(true);
-      const fee = calculateFee();
+  
       
-      // Determine the prices based on selected coins
-      let fromPrice = 0;
-      let toPrice = 0;
-
-      if (fromCoin === 'BTC') fromPrice = btcPrice;
-      else if (fromCoin === 'ETH') fromPrice = ethPrice;
-      else if (fromCoin === 'ROOCH') fromPrice = roochPrice;
-
-      if (toCoin === 'BTC') toPrice = btcPrice;
-      else if (toCoin === 'ETH') toPrice = ethPrice;
-      else if (toCoin === 'ROOCH') toPrice = roochPrice;
-
-      if (fromPrice === 0 || toPrice === 0) {
-        throw new Error('Invalid coin prices');
-      }
-
-      // Calculate the equivalent amount based on prices
-      const amountInUsd = parseFloat(amount) * fromPrice;
-      const toAmount = amountInUsd / toPrice;
-
       const txn = new Transaction();
       txn.callFunction({
         address: counterAddress,
         module: 'dex',
         function: 'swap',
-        // args: [fromCoin, toCoin, amount, toAmount.toString(), (fee * 100).toString()],
+        args: [],
       });
-
+  
       await signAndExecuteTransaction({ transaction: txn });
     } catch (error) {
       console.error(String(error));
@@ -84,24 +64,6 @@ function Swap() {
   // Add new state for fee
   const [feeType, setFeeType] = useState('auto'); // 'auto', 'custom'
   const [customFee, setCustomFee] = useState('');
-  const defaultFee = 0.003; // 0.3% default fee
-
-  // Add this before the return statement
-  const calculateFee = () => {
-    if (feeType === 'free') return 0;
-    if (feeType === 'custom') return parseFloat(customFee) / 100;
-    return defaultFee;
-  };
-
-  // Modify the toAmount calculation to include fees
-  const calculateToAmount = (inputAmount: string) => {
-    const fromPrice = fromCoin === 'BTC' ? btcPrice : fromCoin === 'ETH' ? ethPrice : roochPrice;
-    const toPrice = toCoin === 'BTC' ? btcPrice : toCoin === 'ETH' ? ethPrice : roochPrice;
-    const fee = calculateFee();
-    const amountAfterFee = parseFloat(inputAmount) * (1 - fee);
-    return ((amountAfterFee * fromPrice) / toPrice).toFixed(6);
-  };
-
 
   return (
     <div className="mt-4 w-full font-medium flex flex-col items-center space-y-4">

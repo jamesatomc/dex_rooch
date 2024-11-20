@@ -1,14 +1,11 @@
 import { LoadingButton } from "@mui/lab";
 import { Button, Chip, Divider, Stack, Typography } from "@mui/material";
-import { Transaction } from "@roochnetwork/rooch-sdk";
 import {
-  UseSignAndExecuteTransaction,
   useConnectWallet,
   useCreateSessionKey,
   useCurrentAddress,
   useCurrentSession,
   useRemoveSession,
-  useRoochClientQuery,
   useWalletStore,
   useWallets,
 } from "@roochnetwork/rooch-sdk-kit";
@@ -33,14 +30,7 @@ function App() {
 
   const { mutateAsync: createSessionKey } = useCreateSessionKey();
   const { mutateAsync: removeSessionKey } = useRemoveSession();
-  const { mutateAsync: signAndExecuteTransaction } =
-    UseSignAndExecuteTransaction();
-  // const { data, refetch } = useRoochClientQuery("executeViewFunction", {
-  //   target: `${counterAddress}::quick_start_counter::value`,
-  // });
-
   const [sessionLoading, setSessionLoading] = useState(false);
-  const [txnLoading, setTxnLoading] = useState(false);
   const handlerCreateSessionKey = async () => {
     if (sessionLoading) {
       return;

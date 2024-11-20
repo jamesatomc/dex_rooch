@@ -1,11 +1,10 @@
-// Pool.tsx
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Transaction } from '@roochnetwork/rooch-sdk';
 import {
   UseSignAndExecuteTransaction,
   useCurrentSession,
 } from '@roochnetwork/rooch-sdk-kit';
+import { useState, useEffect } from 'react';
 
 const counterAddress = '0xe454cffdfccf8e4d03030083339fa29356040cee45fd3a51f5046abeaba0681a';
 
@@ -52,14 +51,13 @@ function Pool() {
   const handleAddLiquidity = async () => {
     try {
       setTxnLoading(true);
-      const [token1, token2] = selectedPair.split('-');
       
       const txn = new Transaction();
       txn.callFunction({
         address: counterAddress,
         module: 'liquidity_pool',
         function: 'add_liquidity',
-        // args: [token1, token2, token1Amount, token2Amount],
+        args: [],
       });
       await signAndExecuteTransaction({ transaction: txn });
     } catch (error) {
