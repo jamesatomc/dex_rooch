@@ -70,7 +70,7 @@ function Swap() {
         address: counterAddress,
         module: 'dex',
         function: 'swap',
-        args: [fromCoin, toCoin, amount, toAmount.toString(), (fee * 100).toString()],
+        // args: [fromCoin, toCoin, amount, toAmount.toString(), (fee * 100).toString()],
       });
 
       await signAndExecuteTransaction({ transaction: txn });

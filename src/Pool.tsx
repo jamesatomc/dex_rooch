@@ -59,7 +59,7 @@ function Pool() {
         address: counterAddress,
         module: 'liquidity_pool',
         function: 'add_liquidity',
-        args: [token1, token2, token1Amount, token2Amount],
+        // args: [token1, token2, token1Amount, token2Amount],
       });
       await signAndExecuteTransaction({ transaction: txn });
     } catch (error) {

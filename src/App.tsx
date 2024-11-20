@@ -35,9 +35,9 @@ function App() {
   const { mutateAsync: removeSessionKey } = useRemoveSession();
   const { mutateAsync: signAndExecuteTransaction } =
     UseSignAndExecuteTransaction();
-  const { data, refetch } = useRoochClientQuery("executeViewFunction", {
-    target: `${counterAddress}::quick_start_counter::value`,
-  });
+  // const { data, refetch } = useRoochClientQuery("executeViewFunction", {
+  //   target: `${counterAddress}::quick_start_counter::value`,
+  // });
 
   const [sessionLoading, setSessionLoading] = useState(false);
   const [txnLoading, setTxnLoading] = useState(false);
