@@ -68,90 +68,184 @@ function Pool() {
   };
 
   return (
-    <div className="mt-4 w-full font-medium flex flex-col items-center space-y-4">
-      <h1 className="text-3xl font-bold">Liquidity Pool</h1>
-      <div className="w-full max-w-md flex flex-col items-start space-y-2">
-        <div className="space-y-4 w-full">
-          {/* Price Display */}
-          <div className="w-full p-4 bg-gray-50 rounded-lg">
-            <p className="font-semibold mb-2">Current Prices (USD):</p>
-            <div className="grid grid-cols-3 gap-4">
-              <div>BTC: ${btcPrice}</div>
-              <div>ETH: ${ethPrice}</div>
-              <div>ROOCH: ${roochPrice}</div>
-            </div>
-          </div>
+    <div className="w-full space-y-6">
+      {/* Header */}
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <svg className="w-6 h-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <h2 className="text-2xl font-bold text-gray-800">Liquidity Pool</h2>
+        </div>
+        <p className="text-sm text-gray-600">Add liquidity to earn trading fees</p>
+      </div>
 
-          {/* Pool Pair Selection */}
-          <div className="space-y-2">
-            <label className="text-xl font-semibold">Select Pair:</label>
-            <select 
-              className="w-full p-2 border rounded-lg bg-white text-black"
-              value={selectedPair}
+      {/* Pool Stats */}
+      <div className="grid grid-cols-3 gap-3">
+        <div className="bg-white rounded-lg p-3 text-center border border-gray-200">
+          <div className="text-xs text-gray-500 mb-1">BTC Price</div>
+          <div className="text-sm font-semibold text-gray-800">${btcPrice.toLocaleString()}</div>
+        </div>
+        <div className="bg-white rounded-lg p-3 text-center border border-gray-200">
+          <div className="text-xs text-gray-500 mb-1">ETH Price</div>
+          <div className="text-sm font-semibold text-gray-800">${ethPrice.toLocaleString()}</div>
+        </div>
+        <div className="bg-white rounded-lg p-3 text-center border border-gray-200">
+          <div className="text-xs text-gray-500 mb-1">ROOCH Price</div>
+          <div className="text-sm font-semibold text-gray-800">${roochPrice}</div>
+        </div>
+      </div>
+
+      {/* Pool Container */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        {/* Pool Pair Selection */}
+        <div className="p-4 border-b border-gray-100">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Select Pool Pair</label>
+          <select 
+            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+            value={selectedPair}
+            onChange={(e) => {
+              setSelectedPair(e.target.value);
+              setToken1Amount('');
+              setToken2Amount('');
+            }}
+          >
+            <option value="BTC-ROOCH">BTC / ROOCH Pool</option>
+            <option value="ETH-ROOCH">ETH / ROOCH Pool</option>
+          </select>
+        </div>
+
+        {/* First Token Input */}
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700">First Token</label>
+            <span className="text-xs text-gray-500">Balance: 0.00</span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0 bg-orange-50 border border-orange-200 rounded-lg px-3 py-2">
+              <span className="text-sm font-semibold text-orange-700">{selectedPair.split('-')[0]}</span>
+            </div>
+            <input
+              type="number"
+              placeholder="0.0"
+              className="flex-1 bg-transparent text-right text-lg font-semibold text-gray-800 placeholder-gray-400 border-none outline-none"
+              value={token1Amount}
               onChange={(e) => {
-                setSelectedPair(e.target.value);
-                setToken1Amount('');
-                setToken2Amount('');
+                setToken1Amount(e.target.value);
+                setToken2Amount(calculateToken2Amount(e.target.value));
               }}
-            >
-              <option value="BTC-ROOCH">BTC-ROOCH</option>
-              <option value="ETH-ROOCH">ETH-ROOCH</option>
-            </select>
+            />
           </div>
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-xs text-gray-500">
+              {selectedPair.split('-')[0] === 'BTC' ? `1 BTC = $${btcPrice.toLocaleString()}` : 
+               selectedPair.split('-')[0] === 'ETH' ? `1 ETH = $${ethPrice.toLocaleString()}` : 
+               `1 ROOCH = $${roochPrice}`}
+            </span>
+            <button className="text-xs text-orange-600 hover:text-orange-700 font-medium">MAX</button>
+          </div>
+        </div>
 
-          {/* Token Inputs */}
-          <div className="space-y-4">
-            <div>
-              <label className="text-xl font-semibold">First Token Amount:</label>
-              <div className="flex items-center space-x-2">
-                <div className="flex-1 p-2 border rounded-lg bg-gray-50">
-                  <span className="font-bold">{selectedPair.split('-')[0]}</span>
-                </div>
-                <input
-                  type="number"
-                  placeholder="0.0"
-                  className="border p-2 rounded w-1/2 text-black bg-white"
-                  value={token1Amount}
-                  onChange={(e) => {
-                    setToken1Amount(e.target.value);
-                    setToken2Amount(calculateToken2Amount(e.target.value));
-                  }}
-                />
-              </div>
+        {/* Plus Icon */}
+        <div className="flex justify-center -my-2 relative z-10">
+          <div className="bg-white border-4 border-gray-100 rounded-full p-2">
+            <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Second Token Input */}
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-3">
+            <label className="text-sm font-medium text-gray-700">Second Token</label>
+            <span className="text-xs text-gray-500">Balance: 0.00</span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="flex-shrink-0 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+              <span className="text-sm font-semibold text-blue-700">{selectedPair.split('-')[1]}</span>
             </div>
+            <input
+              type="number"
+              placeholder="0.0"
+              className="flex-1 bg-transparent text-right text-lg font-semibold text-gray-800 placeholder-gray-400 border-none outline-none"
+              value={token2Amount}
+              readOnly
+            />
+          </div>
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-xs text-gray-500">
+              {selectedPair.split('-')[1] === 'BTC' ? `1 BTC = $${btcPrice.toLocaleString()}` : 
+               selectedPair.split('-')[1] === 'ETH' ? `1 ETH = $${ethPrice.toLocaleString()}` : 
+               `1 ROOCH = $${roochPrice}`}
+            </span>
+          </div>
+        </div>
 
-            <div>
-              <label className="text-xl font-semibold">Second Token Amount:</label>
-              <div className="flex items-center space-x-2">
-                <div className="flex-1 p-2 border rounded-lg bg-gray-50">
-                  <span className="font-bold">{selectedPair.split('-')[1]}</span>
-                </div>
-                <input
-                  type="number"
-                  placeholder="0.0"
-                  className="border p-2 rounded w-1/2 text-black bg-white"
-                  value={token2Amount}
-                  readOnly
-                />
-              </div>
+        {/* Pool Info */}
+        <div className="p-4 bg-gray-50 border-b border-gray-100">
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-600">Pool Share</span>
+              <span className="font-medium text-gray-800">0.00%</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{selectedPair.split('-')[0]} per {selectedPair.split('-')[1]}</span>
+              <span className="font-medium text-gray-800">
+                {selectedPair === 'BTC-ROOCH' ? (btcPrice / roochPrice).toFixed(4) : 
+                 selectedPair === 'ETH-ROOCH' ? (ethPrice / roochPrice).toFixed(4) : '0.0000'}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-600">{selectedPair.split('-')[1]} per {selectedPair.split('-')[0]}</span>
+              <span className="font-medium text-gray-800">
+                {selectedPair === 'BTC-ROOCH' ? (roochPrice / btcPrice).toFixed(6) : 
+                 selectedPair === 'ETH-ROOCH' ? (roochPrice / ethPrice).toFixed(6) : '0.000000'}
+              </span>
             </div>
           </div>
         </div>
 
-        <button
-          onClick={handleAddLiquidity}
-          disabled={!sessionKey || !token1Amount || !token2Amount || txnLoading}
-          className={`mt-4 w-full py-3 rounded-lg font-bold text-white transition-colors
-            ${!sessionKey || !token1Amount || !token2Amount || txnLoading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-orange-500 hover:bg-orange-600'}`}
-        >
-          {txnLoading 
-            ? 'Adding Liquidity...' 
-            : !sessionKey 
-            ? 'Please create Session Key first'
-            : 'Add Liquidity'}
-        </button>
+        {/* Add Liquidity Action */}
+        <div className="p-4">
+          <button
+            onClick={handleAddLiquidity}
+            disabled={!sessionKey || !token1Amount || !token2Amount || txnLoading}
+            className={`w-full py-3 rounded-xl font-semibold text-white transition-all ${
+              !sessionKey || !token1Amount || !token2Amount || txnLoading
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+            }`}
+          >
+            {txnLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Adding Liquidity...
+              </div>
+            ) : !sessionKey ? (
+              'Connect Wallet First'
+            ) : !token1Amount || !token2Amount ? (
+              'Enter Amounts'
+            ) : (
+              'Add Liquidity'
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Liquidity Pools List */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-3">Your Liquidity</h3>
+        <div className="text-center py-8 text-gray-500">
+          <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+          <p className="text-sm">No liquidity found</p>
+          <p className="text-xs text-gray-400 mt-1">Add liquidity to see your positions here</p>
+        </div>
       </div>
     </div>
   );
