@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Transaction } from '@roochnetwork/rooch-sdk';
 import {
-  UseSignAndExecuteTransaction,
+  useSignAndExecuteTransaction,
   useCurrentSession,
 } from '@roochnetwork/rooch-sdk-kit';
 import { useState, useEffect } from 'react';
@@ -10,7 +10,7 @@ const counterAddress = '0xe454cffdfccf8e4d03030083339fa29356040cee45fd3a51f5046a
 
 function Swap() {
   const sessionKey = useCurrentSession();
-  const { mutateAsync: signAndExecuteTransaction } = UseSignAndExecuteTransaction();
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
   const [txnLoading, setTxnLoading] = useState(false);
   const [fromCoin, setFromCoin] = useState('BTC');
